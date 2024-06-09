@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_USER=test'
+      - 'POSTGRES_PASSWORD=test'
+      - 'POSTGRES_DB=test_db'
+    ports:
+      - '25432:5432'
+  myapp:
+    image: demo:1.0
+    ports:
+      - 8050:8090
+    #    volumes:
+    #      - ./src/main/resources/application-docker.properties:/configuration/application-docker.properties
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
