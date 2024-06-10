@@ -114,7 +114,7 @@ public class PartController {
 
 
     @GetMapping("/count")
-    @Operation(summary = "Get all documents")
+    @Operation(summary = "Count all documents")
     @PutMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = PartResponseDto.class), mediaType = "application/json")}),

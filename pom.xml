@@ -10,7 +10,7 @@
     </parent>
     <groupId>locking-examle</groupId>
     <artifactId>demo</artifactId>
-    <version>1.0</version>
+    <version>1.0.2</version>
     <name>demo crud example with MongoDb</name>
     <description>locking-example for Spring Boot</description>
     <properties>
@@ -79,11 +79,6 @@
             <version>2.17.1</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-hibernate5</artifactId>
-            <version>2.17.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>bson</artifactId>
             <version>5.0.1</version>
@@ -91,6 +86,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
             <version>3.3.0</version>
         </dependency>
         <dependency>

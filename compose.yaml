@@ -1,23 +1,25 @@
 services:
-  postgres:
-    image: 'postgres:latest'
-    environment:
-      - 'POSTGRES_USER=test'
-      - 'POSTGRES_PASSWORD=test'
-      - 'POSTGRES_DB=test_db'
+  demo:
+    image: kirillmedvedev/demo:1.0.2
     ports:
-      - '25432:5432'
-  myapp:
-    image: demo:1.0
-    ports:
-      - 8050:8090
-    #    volumes:
-    #      - ./src/main/resources/application-docker.properties:/configuration/application-docker.properties
+      - "8050:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - mongodb
+    volumes:
+      - ./src/main/resources/application-docker.properties:/configuration/application-docker.properties
+    networks:
+      - myapp-network
 
   mongodb:
     image: mongo:latest
     container_name: mongodb
     ports:
       - "27017:27017"
+    networks:
+      - myapp-network
+
+networks:
+  myapp-network:
+    driver: bridge
