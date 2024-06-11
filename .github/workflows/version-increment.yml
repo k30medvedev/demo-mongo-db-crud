@@ -1,0 +1,31 @@
+name: Version Increment
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  increment_version:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v1
+      with:
+        java-version: 17
+
+    - name: Increment version
+      run: mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.nextMinorVersion}.0 versions:commit
+
+    - name: Commit version increment
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        git commit -am "Increment version [skip ci]"
+        git tag v`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`
+        git push origin --tags
+        git push origin HEAD:${{ github.event.pull_request.head.ref }}
