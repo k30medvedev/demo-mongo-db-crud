@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/parts")
+@Validated
 @Tag(name = "Demo", description = "Demo APIs for MongoDb project")
 public class PartController {
 
@@ -56,7 +58,7 @@ public class PartController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = PartResponseDto.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public List<PartResponseDto> saveAll(@RequestBody List<PartRequestDto> parts) {
+    public List<PartResponseDto> saveAll(@RequestBody @NotNull List<PartRequestDto> parts) {
         return partService.saveAll(parts);
     }
 
@@ -130,7 +132,7 @@ public class PartController {
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = PartResponseDto.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public void deleteAllById(@RequestBody List<String> ids) {
+    public void deleteAllById(@RequestBody @NotBlank List<String> ids) {
         partService.deleteParts(ids);
     }
 
