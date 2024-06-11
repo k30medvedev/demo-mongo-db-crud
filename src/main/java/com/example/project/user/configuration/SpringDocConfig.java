@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class SpringDocConfig {
     @Bean
     public OpenAPI apiInfo() {
-        return new OpenAPI().info(new Info().title("demo").version("1.0.0"));
+        return new OpenAPI().info(new Info().title("demo").version("1.0.2"));
     }
 
 }
