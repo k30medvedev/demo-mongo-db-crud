@@ -6,6 +6,12 @@ import com.example.project.user.dto.UpdateRequestDto;
 import com.example.project.user.entity.Part;
 import com.example.project.user.mapper.PartMapper;
 import com.example.project.user.repository.PartRepository;
+import com.mongodb.ReadConcern;
+import com.mongodb.ReadPreference;
+import com.mongodb.TransactionOptions;
+import com.mongodb.WriteConcern;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -15,7 +21,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -28,106 +33,131 @@ import static com.example.project.user.service.QueryHelper.createUpdateByFilters
 @Service
 public class PartServiceImpl implements PartService {
 
+    private static final TransactionOptions txnOptions = TransactionOptions.builder()
+            .readPreference(ReadPreference.primary())
+            .readConcern(ReadConcern.MAJORITY)
+            .writeConcern(WriteConcern.MAJORITY)
+            .build();
+
     private final PartMapper mapper;
     private final MongoTemplate mongoTemplate;
     private final PartRepository partRepository;
+    private final MongoClient mongoClient;
 
-
-    public PartServiceImpl(PartRepository partRepository, MongoTemplate mongoTemplate, PartMapper mapper) {
+    public PartServiceImpl(PartRepository partRepository, MongoTemplate mongoTemplate, PartMapper mapper, MongoClient mongoClient) {
         this.partRepository = partRepository;
         this.mongoTemplate = mongoTemplate;
         this.mapper = mapper;
+        this.mongoClient = mongoClient;
     }
 
     @Override
     public PartResponseDto savePart(PartRequestDto partRequestDto) {
-        log.info("Part is saving");
-        Part part = mapper.toPart(partRequestDto);
-        Part result = partRepository.save(part);
-        return mapper.toPartResponseDto(result);
+        log.info("Saving part");
+        try (ClientSession clientSession = mongoClient.startSession()) {
+            return clientSession.withTransaction(() -> {
+                Part part = mapper.toPart(partRequestDto);
+                Part savedPart = partRepository.save(part);
+                return mapper.toPartResponseDto(savedPart);
+            }, txnOptions);
+        }
     }
 
     @Override
-    public List<PartResponseDto> saveAll(List<PartRequestDto> parts) {
-        log.info("Save all parts");
-        List<Part> listToSave = mapper.partToList(parts);
-        List<Part> savedList = partRepository.saveAll(listToSave);
-        return mapper.toPartResponseDtoList(savedList);
+    public List<PartResponseDto> saveAll(List<PartRequestDto> partRequestDtos) {
+        log.info("Saving all parts");
+        try (ClientSession clientSession = mongoClient.startSession()) {
+            return clientSession.withTransaction(() -> {
+                List<Part> parts = mapper.partToList(partRequestDtos);
+                partRepository.saveAll(parts);
+                return mapper.toPartResponseDtoList(parts);
+            }, txnOptions);
+        }
     }
 
     @Override
-    public List<PartResponseDto> findAllByIds(List<String> Ids) {
-        log.info("Find all parts by list of Id");
-        return mapper.toPartResponseDtos(partRepository.findAllById(Ids));
+    public List<PartResponseDto> findAllByIds(List<String> ids) {
+        log.info("Finding parts by list of IDs");
+        List<Part> parts = partRepository.findAllById(ids);
+        return mapper.toPartResponseDtoList(parts);
     }
 
     @Override
     public PartResponseDto findById(String id) {
-        log.info(String.format("Find part by id: [%s] ", id));
+        log.info("Finding part by ID: [{}]", id);
         Part part = findOneOrThrowException(id);
         return mapper.toPartResponseDto(part);
     }
 
     @Override
     public List<PartResponseDto> getAllParts() {
-        log.info("All parts requested");
-        return mapper.toPartResponseDtoList(partRepository.findAll());
+        log.info("Getting all parts");
+        List<Part> parts = partRepository.findAll();
+        return mapper.toPartResponseDtoList(parts);
     }
 
     @Override
     public List<PartResponseDto> searchPartsByFilters(@NotNull Map<String, String> filters) {
+        log.info("Searching parts by filters");
         Query query = createQueryByFilters(filters);
-        return mapper.toPartResponseDtoList(mongoTemplate.find(query, Part.class));
+        List<Part> parts = mongoTemplate.find(query, Part.class);
+        return mapper.toPartResponseDtoList(parts);
     }
 
     @Override
-    @Transactional
     public void decreaseStock(String id, int quantity) {
-        findOneOrThrowException(id);
-
-        mongoTemplate.updateFirst(
-                Query.query(Criteria.where("_id").is(id)),
-                new Update().inc("stock", -quantity),
-                Part.class
-        );
-
+        log.info("Decreasing stock for part ID: [{}] by quantity: [{}]", id, quantity);
+        try (ClientSession clientSession = mongoClient.startSession()) {
+            clientSession.withTransaction(() -> {
+                findOneOrThrowException(id);
+                mongoTemplate.updateFirst(
+                        Query.query(Criteria.where("_id").is(id)),
+                        new Update().inc("stock", -quantity),
+                        Part.class
+                );
+                return null;
+            }, txnOptions);
+        }
     }
 
     @Override
-    @Transactional
-    public void updatePartsByFilter(@NotNull List<UpdateRequestDto> updateRequest) {
-        log.info("Update parts by filter");
-        BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Part.class);
-
-        updateRequest.forEach(element -> {
-                    String id = element.id();
+    public void updatePartsByFilter(@NotNull List<UpdateRequestDto> updateRequests) {
+        log.info("Updating parts by filter");
+        try (ClientSession clientSession = mongoClient.startSession()) {
+            clientSession.withTransaction(() -> {
+                BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Part.class);
+                updateRequests.forEach(updateRequest -> {
+                    String id = updateRequest.id();
                     findOneOrThrowException(id);
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("id").is(id));
-                    Update update = createUpdateByFilters(element.values());
+                    Query query = Query.query(Criteria.where("id").is(id));
+                    Update update = createUpdateByFilters(updateRequest.values());
                     bulkOperations.updateOne(query, update);
-
-                }
-        );
-        bulkOperations.execute();
-
+                });
+                bulkOperations.execute();
+                return null;
+            }, txnOptions);
+        }
     }
 
     @Override
     public Long getCount() {
+        log.info("Getting parts count");
         return partRepository.count();
     }
 
     @Override
-    @Transactional
     public void deleteParts(List<String> ids) {
-        log.info("delete parts by filter");
-        partRepository.deleteAllById(ids);
+        log.info("Deleting parts by IDs");
+        try (ClientSession clientSession = mongoClient.startSession()) {
+            clientSession.withTransaction(() -> {
+                partRepository.deleteAllById(ids);
+                return null;
+            }, txnOptions);
+        }
     }
-
 
     private Part findOneOrThrowException(String id) {
         return partRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Part not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Part not found with ID: " + id));
     }
 }

@@ -1,0 +1,112 @@
+[
+  {
+    "partName": "Brake Pad",
+    "partNumber": "BP-12345",
+    "carMake": "Toyota",
+    "carModel": "Corolla",
+    "year": 2020,
+    "price": 50.0,
+    "stock": 100,
+    "description": "High-quality brake pad for Toyota Corolla",
+    "category": "Brakes"
+  },
+  {
+    "partName": "Oil Filter",
+    "partNumber": "OF-67890",
+    "carMake": "Honda",
+    "carModel": "Civic",
+    "year": 2019,
+    "price": 10.0,
+    "stock": 200,
+    "description": "Durable oil filter for Honda Civic",
+    "category": "Filters"
+  },
+  {
+    "partName": "Air Filter",
+    "partNumber": "AF-54321",
+    "carMake": "Ford",
+    "carModel": "Focus",
+    "year": 2018,
+    "price": 15.0,
+    "stock": 150,
+    "description": "Premium air filter for Ford Focus",
+    "category": "Filters"
+  },
+  {
+    "partName": "Spark Plug",
+    "partNumber": "SP-98765",
+    "carMake": "Chevrolet",
+    "carModel": "Cruze",
+    "year": 2021,
+    "price": 7.0,
+    "stock": 300,
+    "description": "High-performance spark plug for Chevrolet Cruze",
+    "category": "Engine"
+  },
+  {
+    "partName": "Headlight",
+    "partNumber": "HL-11223",
+    "carMake": "Nissan",
+    "carModel": "Altima",
+    "year": 2017,
+    "price": 120.0,
+    "stock": 80,
+    "description": "Bright headlight for Nissan Altima",
+    "category": "Lighting"
+  },
+  {
+    "partName": "Battery",
+    "partNumber": "BT-33445",
+    "carMake": "BMW",
+    "carModel": "X5",
+    "year": 2022,
+    "price": 150.0,
+    "stock": 50,
+    "description": "Long-lasting battery for BMW X5",
+    "category": "Electrical"
+  },
+  {
+    "partName": "Alternator",
+    "partNumber": "AL-55667",
+    "carMake": "Mercedes",
+    "carModel": "C-Class",
+    "year": 2016,
+    "price": 200.0,
+    "stock": 40,
+    "description": "Reliable alternator for Mercedes C-Class",
+    "category": "Electrical"
+  },
+  {
+    "partName": "Fuel Pump",
+    "partNumber": "FP-77889",
+    "carMake": "Audi",
+    "carModel": "A4",
+    "year": 2015,
+    "price": 250.0,
+    "stock": 30,
+    "description": "Efficient fuel pump for Audi A4",
+    "category": "Fuel System"
+  },
+  {
+    "partName": "Radiator",
+    "partNumber": "RD-99000",
+    "carMake": "Volkswagen",
+    "carModel": "Jetta",
+    "year": 2014,
+    "price": 180.0,
+    "stock": 20,
+    "description": "Durable radiator for Volkswagen Jetta",
+    "category": "Cooling System"
+  },
+  {
+    "partName": "Shock Absorber",
+    "partNumber": "SA-22334",
+    "carMake": "Hyundai",
+    "carModel": "Elantra",
+    "year": 2023,
+    "price": 90.0,
+    "stock": 60,
+    "description": "Comfortable shock absorber for Hyundai Elantra",
+    "category": "Suspension"
+  }
+]
