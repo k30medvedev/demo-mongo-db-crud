@@ -42,12 +42,12 @@ class PartMapperTest {
     @Test
     void testToPartResponseDto() {
         Part part = new Part("partName", "partNumber", "carMake", "carModel", 2020, 100.500, 10, "description", "category");
-        part.setId("1"); // assuming setId is a method to set the ID for testing purposes
+        part.setUUID("1"); // assuming setId is a method to set the ID for testing purposes
 
         PartResponseDto dto = partMapper.toPartResponseDto(part);
 
         assertNotNull(dto);
-        assertEquals(part.getId(), dto.id());
+        assertEquals(part.getUUID(), dto.uuid());
         assertEquals(part.getPartName(), dto.partName());
         assertEquals(part.getPartNumber(), dto.partNumber());
         assertEquals(part.getCarMake(), dto.carMake());
@@ -63,8 +63,8 @@ class PartMapperTest {
     void testToPartResponseDtos() {
         Part part1 = new Part("partName1", "partNumber1", "carMake1", "carModel1", 2020, 100.500, 10, "description1", "category1");
         Part part2 = new Part("partName2", "partNumber2", "carMake2", "carModel2", 2021, 100.500, 5, "description2", "category2");
-        part1.setId("1");
-        part2.setId("2");
+        part1.setUUID("1");
+        part2.setUUID("2");
 
         List<Part> parts = Arrays.asList(part1, part2);
 
@@ -73,7 +73,7 @@ class PartMapperTest {
         assertNotNull(dtos);
         assertEquals(2, dtos.size());
 
-        assertEquals(part1.getId(), dtos.get(0).id());
+        assertEquals(part1.getUUID(), dtos.get(0).uuid());
         assertEquals(part1.getPartName(), dtos.get(0).partName());
         assertEquals(part1.getPartNumber(), dtos.get(0).partNumber());
         assertEquals(part1.getCarMake(), dtos.get(0).carMake());
@@ -84,7 +84,7 @@ class PartMapperTest {
         assertEquals(part1.getDescription(), dtos.get(0).description());
         assertEquals(part1.getCategory(), dtos.get(0).category());
 
-        assertEquals(part2.getId(), dtos.get(1).id());
+        assertEquals(part2.getUUID(), dtos.get(1).uuid());
         assertEquals(part2.getPartName(), dtos.get(1).partName());
         assertEquals(part2.getPartNumber(), dtos.get(1).partNumber());
         assertEquals(part2.getCarMake(), dtos.get(1).carMake());
@@ -133,8 +133,8 @@ class PartMapperTest {
     void testToPartResponseDtoList() {
         Part part1 = new Part("partName1", "partNumber1", "carMake1", "carModel1", 2020, 100.500, 10, "description1", "category1");
         Part part2 = new Part("partName2", "partNumber2", "carMake2", "carModel2", 2021, 100.500, 5, "description2", "category2");
-        part1.setId("1");
-        part2.setId("2");
+        part1.setUUID("1");
+        part2.setUUID("2");
 
         List<Part> parts = Arrays.asList(part1, part2);
 
@@ -143,7 +143,7 @@ class PartMapperTest {
         assertNotNull(dtos);
         assertEquals(2, dtos.size());
 
-        assertEquals(part1.getId(), dtos.get(0).id());
+        assertEquals(part1.getUUID(), dtos.get(0).uuid());
         assertEquals(part1.getPartName(), dtos.get(0).partName());
         assertEquals(part1.getPartNumber(), dtos.get(0).partNumber());
         assertEquals(part1.getCarMake(), dtos.get(0).carMake());
@@ -154,7 +154,7 @@ class PartMapperTest {
         assertEquals(part1.getDescription(), dtos.get(0).description());
         assertEquals(part1.getCategory(), dtos.get(0).category());
 
-        assertEquals(part2.getId(), dtos.get(1).id());
+        assertEquals(part2.getUUID(), dtos.get(1).uuid());
         assertEquals(part2.getPartName(), dtos.get(1).partName());
         assertEquals(part2.getPartNumber(), dtos.get(1).partNumber());
         assertEquals(part2.getCarMake(), dtos.get(1).carMake());

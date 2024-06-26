@@ -55,7 +55,7 @@ class PartControllerTest {
 
         assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(result.getResponse().getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(jsonPath("$.id", result.getResponse().getContentAsString()).value("test-id"));
+        assertThat(jsonPath("$.uuid", result.getResponse().getContentAsString()).value("test-id"));
         assertThat(jsonPath("$.partName", result.getResponse().getContentAsString()).value("Test Part"));
 
     }
