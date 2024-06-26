@@ -1,5 +1,7 @@
 package com.example.project.user.entity;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -12,7 +14,9 @@ import java.util.Objects;
 @Document(collection = "parts")
 public class Part {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String UUID;
+
     private String partName;
     private String partNumber;
     private String carMake;
@@ -40,11 +44,11 @@ public class Part {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Part part = (Part) o;
-        return year == part.year && Double.compare(price, part.price) == 0 && stock == part.stock && Objects.equals(id, part.id) && Objects.equals(partName, part.partName) && Objects.equals(partNumber, part.partNumber) && Objects.equals(carMake, part.carMake) && Objects.equals(carModel, part.carModel) && Objects.equals(description, part.description) && Objects.equals(category, part.category);
+        return year == part.year && Double.compare(price, part.price) == 0 && stock == part.stock && Objects.equals(UUID, part.UUID) && Objects.equals(partName, part.partName) && Objects.equals(partNumber, part.partNumber) && Objects.equals(carMake, part.carMake) && Objects.equals(carModel, part.carModel) && Objects.equals(description, part.description) && Objects.equals(category, part.category);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, partName, partNumber, carMake, carModel, year, price, stock, description, category);
+        return Objects.hash(UUID, partName, partNumber, carMake, carModel, year, price, stock, description, category);
     }
 }

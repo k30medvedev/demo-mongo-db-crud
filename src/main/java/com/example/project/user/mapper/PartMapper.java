@@ -27,7 +27,7 @@ public class PartMapper {
 
     public PartResponseDto toPartResponseDto(@NotNull Part part) {
         return PartResponseDto.builder()
-                .id(part.getId())
+                .uuid(part.getUUID())
                 .partName(part.getPartName())
                 .partNumber(part.getPartNumber())
                 .carMake(part.getCarMake())

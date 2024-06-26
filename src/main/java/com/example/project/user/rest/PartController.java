@@ -129,8 +129,7 @@ public class PartController {
     @DeleteMapping
     @Operation(summary = "Delete all documents")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = PartResponseDto.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "201", content = {@Content(schema = @Schema(implementation = PartResponseDto.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
     public void deleteAllById(@RequestBody @NotBlank List<String> ids) {
         partService.deleteParts(ids);

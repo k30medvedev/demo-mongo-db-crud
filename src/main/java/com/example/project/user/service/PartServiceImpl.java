@@ -127,7 +127,7 @@ public class PartServiceImpl implements PartService {
             clientSession.withTransaction(() -> {
                 BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Part.class);
                 updateRequests.forEach(updateRequest -> {
-                    String id = updateRequest.id();
+                    String id = updateRequest.uuid();
                     findOneOrThrowException(id);
                     Query query = Query.query(Criteria.where("id").is(id));
                     Update update = createUpdateByFilters(updateRequest.values());

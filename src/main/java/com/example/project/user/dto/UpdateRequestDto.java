@@ -7,6 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 @Builder
-public record UpdateRequestDto(@NotNull String id,
+public record UpdateRequestDto(@NotNull String uuid,
                                @NotBlank Map<String, String> values) {
 }
