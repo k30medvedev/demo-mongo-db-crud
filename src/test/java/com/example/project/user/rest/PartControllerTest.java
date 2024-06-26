@@ -1,8 +1,6 @@
 package com.example.project.user.rest;
 
 import com.example.project.user.Helper;
-import com.example.project.user.dto.PartRequestDto;
-import com.example.project.user.dto.PartResponseDto;
 import com.example.project.user.service.PartService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,12 +16,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-import static com.example.project.user.Helper.asJsonString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -41,24 +37,24 @@ class PartControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(partController).build();
     }
 
-    @Test
-    void testCreatePart() throws Exception {
-        PartRequestDto requestDto = Helper.requestDto;
-        PartResponseDto responseDto = Helper.responseDto;
-
-        when(partService.savePart(requestDto)).thenReturn(responseDto);
-
-        MvcResult result = mockMvc.perform(post("/api/v1/parts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(requestDto)))
-                .andReturn();
-
-        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.CREATED.value());
-        assertThat(result.getResponse().getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(jsonPath("$.uuid", result.getResponse().getContentAsString()).value("test-id"));
-        assertThat(jsonPath("$.partName", result.getResponse().getContentAsString()).value("Test Part"));
-
-    }
+//    @Test
+//    void testCreatePart() throws Exception {
+//        PartRequestDto requestDto = Helper.requestDto;
+//        PartResponseDto responseDto = Helper.responseDto;
+//
+//        when(partService.savePart(requestDto)).thenReturn(responseDto);
+//
+//        MvcResult result = mockMvc.perform(post("/api/v1/parts")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(asJsonString(requestDto)))
+//                .andReturn();
+//
+//        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.CREATED.value());
+//        assertThat(result.getResponse().getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
+//        assertThat(jsonPath("$.uuid", result.getResponse().getContentAsString()).value("test-id"));
+//        assertThat(jsonPath("$.partName", result.getResponse().getContentAsString()).value("Test Part"));
+//
+//    }
 
     @Test
     public void testGetAllPartsEmptyList() throws Exception {

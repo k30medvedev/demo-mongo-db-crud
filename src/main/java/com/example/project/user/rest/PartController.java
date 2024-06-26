@@ -3,6 +3,7 @@ package com.example.project.user.rest;
 import com.example.project.user.dto.PartRequestDto;
 import com.example.project.user.dto.PartResponseDto;
 import com.example.project.user.dto.UpdateRequestDto;
+import com.example.project.user.filter.RequestIdCache;
 import com.example.project.user.service.PartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,9 +27,11 @@ import java.util.Map;
 public class PartController {
 
     private final PartService partService;
+    private final RequestIdCache requestIdCache;
 
-    public PartController(PartService partService) {
+    public PartController(PartService partService, RequestIdCache requestIdCache) {
         this.partService = partService;
+        this.requestIdCache = requestIdCache;
     }
 
     @Operation(summary = "Create a new part")
@@ -37,8 +40,14 @@ public class PartController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = PartResponseDto.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public PartResponseDto createPart(@RequestBody PartRequestDto part) {
-        return partService.savePart(part);
+    public PartResponseDto createPart(@RequestBody PartRequestDto part, @RequestHeader("RequestID") String requestId) {
+        if (requestIdCache.isDuplicate(requestId)) {
+            return requestIdCache.getCachedResponse(requestId);
+        }
+
+        PartResponseDto response = partService.savePart(part);
+        requestIdCache.cacheResponse(requestId, response);
+        return response;
     }
 
     @Operation(summary = "Get all parts")
