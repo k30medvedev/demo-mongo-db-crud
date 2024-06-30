@@ -18,6 +18,7 @@ These instructions will help you set up and run the project on your local machin
 - Java 11 or higher
 - Maven
 - MongoDB
+- RabbitMQ
 
 ### Installation
 
