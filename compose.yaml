@@ -29,6 +29,16 @@ services:
     networks:
       - myapp-network
 
+  rabbitmq:
+    container_name: 'rabbit'
+    image: 'rabbitmq:latest'
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=test'
+      - 'RABBITMQ_DEFAULT_USER=test'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
 networks:
   myapp-network:
     driver: bridge

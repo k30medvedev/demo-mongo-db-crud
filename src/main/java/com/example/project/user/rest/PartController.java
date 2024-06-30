@@ -4,6 +4,7 @@ import com.example.project.user.dto.PartRequestDto;
 import com.example.project.user.dto.PartResponseDto;
 import com.example.project.user.dto.UpdateRequestDto;
 import com.example.project.user.filter.RequestIdCache;
+import com.example.project.user.rabbitmq.RabbitMQSender;
 import com.example.project.user.service.PartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("api/v1/parts")
 @Validated
@@ -28,10 +30,13 @@ public class PartController {
 
     private final PartService partService;
     private final RequestIdCache requestIdCache;
+    private final RabbitMQSender rabbitMQSender;
 
-    public PartController(PartService partService, RequestIdCache requestIdCache) {
+
+    public PartController(PartService partService, RequestIdCache requestIdCache, RabbitMQSender rabbitMQSender) {
         this.partService = partService;
         this.requestIdCache = requestIdCache;
+        this.rabbitMQSender = rabbitMQSender;
     }
 
     @Operation(summary = "Create a new part")
@@ -47,6 +52,7 @@ public class PartController {
 
         PartResponseDto response = partService.savePart(part);
         requestIdCache.cacheResponse(requestId, response);
+        rabbitMQSender.send(response);
         return response;
     }
 
@@ -58,7 +64,9 @@ public class PartController {
             @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
     public List<PartResponseDto> getAllParts() {
-        return partService.getAllParts();
+        var response = partService.getAllParts();
+        rabbitMQSender.send(response);
+        return response;
     }
 
     @Operation(summary = "Save multiple parts")
@@ -68,7 +76,9 @@ public class PartController {
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = PartResponseDto.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
     public List<PartResponseDto> saveAll(@RequestBody @NotNull List<PartRequestDto> parts) {
-        return partService.saveAll(parts);
+        var response = partService.saveAll(parts);
+        rabbitMQSender.send(response);
+        return response;
     }
 
     @Operation(summary = "Get part by ID")
