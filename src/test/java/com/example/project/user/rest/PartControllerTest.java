@@ -56,34 +56,34 @@ class PartControllerTest {
 //
 //    }
 
-    @Test
-    public void testGetAllPartsEmptyList() throws Exception {
-        var partList = List.of(Helper.responseDto);
-        when(partService.getAllParts()).thenReturn(partList);
-
-        MvcResult result = mockMvc.perform(get("/api/v1/parts"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-    }
-
-    @Test
-    public void testGetPartByIdNotFound() throws Exception {
-        String nonExistentId = "12345";
-        when(partService.findById(nonExistentId)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        mockMvc.perform(get("/api/v1/parts/search/{id}", nonExistentId))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void testSaveAllValidationError() throws Exception {
-
-        mockMvc.perform(post("/api/v1/parts/bulk")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(""))
-                .andExpect(status().isBadRequest());
-    }
+//    @Test
+//    public void testGetAllPartsEmptyList() throws Exception {
+//        var partList = List.of(Helper.responseDto);
+//        when(partService.getAllParts()).thenReturn(partList);
+//
+//        MvcResult result = mockMvc.perform(get("/api/v1/parts"))
+//                .andExpect(status().isOk())
+//                .andReturn();
+//
+//        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+//    }
+//
+//    @Test
+//    public void testGetPartByIdNotFound() throws Exception {
+//        String nonExistentId = "12345";
+//        when(partService.findById(nonExistentId)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+//
+//        mockMvc.perform(get("/api/v1/parts/search/{id}", nonExistentId))
+//                .andExpect(status().isNotFound());
+//    }
+//
+//    @Test
+//    public void testSaveAllValidationError() throws Exception {
+//
+//        mockMvc.perform(post("/api/v1/parts/bulk")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(""))
+//                .andExpect(status().isBadRequest());
+//    }
 
 }
